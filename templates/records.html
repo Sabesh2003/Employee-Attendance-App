@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Attendance Records</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; padding: 40px 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 { color: #2d3748; margin-bottom: 8px; }
+        p.subtitle { color: #718096; margin-bottom: 30px; }
+        table { width: 100%; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border-collapse: collapse; overflow: hidden; }
+        thead { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+        th { padding: 16px 20px; text-align: left; }
+        td { padding: 14px 20px; border-bottom: 1px solid #e2e8f0; color: #4a5568; }
+        tr:last-child td { border-bottom: none; }
+        .badge { padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+        .badge-present { background: #c6f6d5; color: #276749; }
+        .badge-absent { background: #fed7d7; color: #9b2c2c; }
+        .badge-wfh { background: #bee3f8; color: #2a69ac; }
+        .badge-half { background: #fefcbf; color: #744210; }
+        .back-link { display: inline-block; margin-bottom: 24px; color: #667eea; text-decoration: none; font-weight: 500; }
+        .empty { text-align: center; padding: 60px; color: #a0aec0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Back to Attendance Form</a>
+        <h1>📊 Attendance Records</h1>
+        <p class="subtitle">All attendance entries</p>
+        {% if records %}
+        <table>
+            <thead>
+                <tr><th>#</th><th>Name</th><th>Employee ID</th><th>Status</th><th>Timestamp</th></tr>
+            </thead>
+            <tbody>
+                {% for row in records %}
+                <tr>
+                    <td>{{ row[0] }}</td>
+                    <td><strong>{{ row[1] }}</strong></td>
+                    <td>{{ row[2] }}</td>
+                    <td>
+                        {% if row[3] == 'Present' %}<span class="badge badge-present">{{ row[3] }}</span>
+                        {% elif row[3] == 'Absent' %}<span class="badge badge-absent">{{ row[3] }}</span>
+                        {% elif row[3] == 'Work From Home' %}<span class="badge badge-wfh">{{ row[3] }}</span>
+                        {% else %}<span class="badge badge-half">{{ row[3] }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ row[4] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty">No records yet. Mark some attendance first!</div>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: attendance-app
+  labels:
+    app: attendance-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: attendance-app
+  template:
+    metadata:
+      labels:
+        app: attendance-app
+    spec:
+      containers:
+      - name: attendance-app
+        image: sabesh2003/attendance-app:latest
+        ports:
+        - containerPort: 5000
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 10
+          periodSeconds: 15
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 10
