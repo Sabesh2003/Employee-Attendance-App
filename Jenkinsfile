@@ -40,8 +40,8 @@ pipeline {
                     export KUBECONFIG=/var/jenkins_home/.kube/config
                     kubectl apply -f k8s/deployment.yaml
                     kubectl apply -f k8s/service.yaml
-                    kubectl set image deployment/attendance-app attendance-app=${DOCKER_IMAGE}:${DOCKER_TAG}
-                    kubectl rollout status deployment/attendance-app --timeout=60s
+                    kubectl set image deployment/attendance-app attendance-app=${DOCKER_IMAGE}:latest
+                    kubectl rollout status deployment/attendance-app --timeout=120s
                 """
             }
         }
