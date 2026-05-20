@@ -19,27 +19,30 @@ pipeline {
             }
         }
         stage('Push to Docker Hub') {
-    steps {
-        echo 'Pushing to Docker Hub...'
-        withCredentials([usernamePassword(
-            credentialsId: 'dockerhub-creds',
-            usernameVariable: 'DOCKER_USER',
-            passwordVariable: 'DOCKER_PASS'
-        )]) {
-            sh '''
-                echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                docker push sabesh2003/attendance-app:latest
-            '''
+            steps {
+                echo 'Pushing to Docker Hub...'
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        docker push sabesh2003/attendance-app:latest
+                    '''
+                }
+            }
         }
-    }
-}
         stage('Deploy to Kubernetes') {
             steps {
                 echo '☸️ Deploying to Kubernetes...'
-                sh "kubectl apply -f k8s/deployment.yaml"
-                sh "kubectl apply -f k8s/service.yaml"
-                sh "kubectl set image deployment/attendance-app attendance-app=${DOCKER_IMAGE}:${DOCKER_TAG}"
-                sh "kubectl rollout status deployment/attendance-app"
+                sh """
+                    export KUBECONFIG=/var/jenkins_home/.kube/config
+                    kubectl apply -f k8s/deployment.yaml
+                    kubectl apply -f k8s/service.yaml
+                    kubectl set image deployment/attendance-app attendance-app=${DOCKER_IMAGE}:${DOCKER_TAG}
+                    kubectl rollout status deployment/attendance-app --timeout=60s
+                """
             }
         }
     }
